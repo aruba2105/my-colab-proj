@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Management System - High Level Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        .diagram-container {
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .component-card {
+            transition: all 0.2s ease;
+        }
+        .component-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 py-12">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Portfolio Management System</h1>
+            <p class="text-xl text-gray-600">High Level Design Architecture</p>
+        </header>
+
+        <div class="bg-white rounded-xl shadow-md p-8 mb-12">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Problem Statement</h2>
+            <ul class="list-disc pl-6 space-y-2 text-gray-700">
+                <li>250 users with at least one account containing assets (stocks or mutual funds)</li>
+                <li>Real-time portfolio visibility for users</li>
+                <li>Multiple price data sources updating periodically</li>
+                <li>Data refreshes every 10 minutes</li>
+                <li>Requires high reliability and scalability</li>
+            </ul>
+        </div>
+
+        <div class="diagram-container">
+            <div class="mermaid">
+                flowchart TD
+                    subgraph User Layer
+                        A[Web/Mobile UI] -->|View Portfolio| B(User Management)
+                    end
+
+                    subgraph Application Layer
+                        B -->|Auth & Profile Data| C[Portfolio Management]
+                        C -->|Get Positions| D[Database]
+                        F[Scheduler] -->|Trigger Update| C
+                        G[Notification Service] -->|Alerts| A
+                    end
+
+                    subgraph Data Layer
+                        C -->|Fetch Prices| E[Data Aggregator]
+                        E -->|Normalize Data| H[Source 1 API]
+                        E -->|Normalize Data| I[Source 2 API]
+                        E -->|Normalize Data| J[Source 3 API]
+                    end
+
+                    classDef user fill:#e0f2fe,stroke:#0369a1
+                    classDef app fill:#dcfce7,stroke:#16a34a
+                    classDef data fill:#fae8ff,stroke:#c026d3
+                    class A,B user
+                    class C,D,F,G app
+                    class E,H,I,J data
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+            <div class="component-card bg-blue-50 p-6 rounded-lg border border-blue-100">
+                <h3 class="text-xl font-semibold text-blue-800 mb-3">User Interface</h3>
+                <p class="text-blue-600">Web and mobile applications showing real-time portfolio data with 10-minute price refreshes.</p>
+                <img src="https://placehold.co/600x300" alt="Modern responsive dashboard interface showing portfolio holdings and performance charts" class="mt-4 rounded" />
+            </div>
+
+            <div class="component-card bg-green-50 p-6 rounded-lg border border-green-100">
+                <h3 class="text-xl font-semibold text-green-800 mb-3">Portfolio Service</h3>
+                <p class="text-green-600">Core service calculating and maintaining portfolios with position aggregation from multiple accounts per user.</p>
+                <img src="https://placehold.co/600x300" alt="Backend service architecture diagram showing portfolio calculation logic" class="mt-4 rounded" />
+            </div>
+
+            <div class="component-card bg-purple-50 p-6 rounded-lg border border-purple-100">
+                <h3 class="text-xl font-semibold text-purple-800 mb-3">Data Aggregation</h3>
+                <p class="text-purple-600">Normalizes data from multiple sources with validation and fallback mechanisms for reliability.</p>
+                <img src="https://placehold.co/600x300" alt="Data pipeline diagram showing multiple API sources flowing into a normalization layer" class="mt-4 rounded" />
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md p-8 mt-12">`<h2 class="text-2xl font-semibold text-gray-800 mb-6">Key Design Decisions</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-700 mb-2">Scalability</h3>
+                    <ul class="list-disc pl-6 space-y-1 text-gray-600">
+                        <li>Microservices architecture allows independent scaling</li>
+                        <li>Caching layer for price data reduces database load</li>
+                        <li>Horizontal scaling of stateless services</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-gray-700 mb-2">Reliability</h3>
+                    <ul class="list-disc pl-6 space-y-1 text-gray-600">
+                        <li>Fallback data sources when primary is unavailable</li>
+                        <li>Message queue for async processing of price updates</li>
+                        <li>Circuit breakers for external API calls</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+</body>
+</html>
